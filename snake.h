@@ -6,6 +6,13 @@
 #define DIR_RIGHT 2
 #define DIR_LEFT 3
 
+#define STANDARD_SNAKE_LENGTH 3
+
+#define WIN_HEIGHT 30
+#define WIN_WIDTH 30
+#define WIN_X 3
+#define WIN_Y 3
+
 typedef struct point_struct{
 	int x;
 	int y;
@@ -15,6 +22,8 @@ typedef struct point_struct{
 typedef struct snake_struct{
 	Point * head;
 	int length;
+	int direction;
+	char icon;
 } Snake;
 
 void makePoint(Point* p, int x, int y); //sets point at given addr
@@ -23,5 +32,5 @@ void push_front(Snake * snk, int flag, int x, int y); //add to front of snake, i
 int push_back(Snake * snk, int x, int y); //add to back of snake, return new length
 Point * rm_last(Snake * s);
 void printSnake(Snake * snk);
-
+void initSnake(Snake * snk, int player_num); //initialize snake values based on player number
 #endif

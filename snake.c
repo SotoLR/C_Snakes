@@ -74,3 +74,34 @@ void printSnake(Snake * snk){
 	printf("%d:%d ", first->x, first->y);
 	printf("\n");
 }
+
+void initSnake(Snake * snk, int player){
+	int start_x, start_y, grow_dir;
+	if(player == 0){
+		start_x = WIN_X+STANDARD_SNAKE_LENGTH;
+		grow_dir = -1;
+		start_y = WIN_Y;
+		snk->icon = '#';
+	}else{
+		start_x = WIN_X + WIN_WIDTH - STANDARD_SNAKE_LENGTH -1;
+		grow_dir = 1;
+		start_y = WIN_Y + WIN_HEIGHT - 1;
+		snk->icon = '&';
+	}
+
+	Point n_head = newPoint(start_x, start_y);
+	snk->head = &n_head;
+
+	for(int i = 0; i < STANDARD_SNAKE_LENGTH; i++){
+		start_x += grow_dir;
+		push_back(snk, start_x, start_y);
+	}
+	
+	snk->length = STANDARD_SNAKE_LENGTH;
+	
+	if(player%2 == 0){
+		snk->direction = DIR_RIGHT;
+	}else{
+		snk->direction = DIR_LEFT;
+	}
+}
