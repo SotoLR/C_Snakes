@@ -6,7 +6,8 @@
 #define DIR_RIGHT 2
 #define DIR_LEFT 3
 
-#define STANDARD_SNAKE_LENGTH 3
+#define STANDARD_SNAKE_LENGTH 4
+#define SNAKE_SPEED 1
 
 #define WIN_HEIGHT 30
 #define WIN_WIDTH 30
