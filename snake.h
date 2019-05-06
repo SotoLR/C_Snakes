@@ -29,7 +29,7 @@ typedef struct snake_struct{
 
 void makePoint(Point* p, int x, int y); //sets point at given addr
 Point newPoint(int x, int y); //Creates new point (assign this to a new var)
-void push_front(Snake * snk, int flag, int x, int y); //add to front of snake, if flag, last is not deleted
+Point * push_front(Snake * s, int flag, int x, int y); //add to front of snake, if flag, last is not deleted
 int push_back(Snake * snk, int x, int y); //add to back of snake, return new length
 Point * rm_last(Snake * s);
 void printSnake(Snake * snk);

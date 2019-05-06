@@ -1,20 +1,35 @@
 #Snakes Makefile
 CC = gcc
-LIBS = -lncurses
+LIBS = -lncurses -lpthread -lm
 FLAGS = -Wall -g -std=gnu99
+
+OBJECTS = snake.o
+
+DEPENDS = snake.h
 
 CURSESTEST = curses_test
 GENERALTEST = gen_test
 
-all: $(CURSESTEST) $(GENERALTEST)
+SERVER = snake_server
+CLIENT = snake_client
+
+all: $(SERVER) $(CLIENT)
 
 tests: $(CURSESTEST) $(GENERALTEST)
 
-$(CURSESTEST): $(CURSESTEST).c
+$(SERVER): $(SERVER).c $(OBJECTS)
 	$(CC) -o $@.o $< $(FLAGS) $(LIBS)
 
-$(GENERALTEST): $(GENERALTEST).c
+$(CLIENT): $(CLIENT).c $(OBJECTS)
+	$(CC) -o $@.o $< $(FLAGS) $(LIBS)
+
+$(CURSESTEST): $(CURSESTEST).c $(OBJECTS)
+	$(CC) -o $@.o $< $(FLAGS) $(LIBS)
+
+$(GENERALTEST): $(GENERALTEST).c $(OBJECTS)
 	$(CC) -o $@.o $< $(FLAGS) $(LIBS)
 
 clean:
 	rm -rf *.o $(TEST)
+
+.PHONY: clean all
