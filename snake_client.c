@@ -31,7 +31,7 @@ typedef struct control_thread_struct{
 } ctrl_thread_t;
 
 WINDOW *create_newwin(int height, int width, int starty, int startx);
-void * drawThread(void * args);
+void drawGame(draw_thread_t * args);
 void * controlThread(void * args);
 
 int main(int argc, char **argv){
@@ -63,8 +63,10 @@ int main(int argc, char **argv){
 	cbreak(); //disable line buffering
 	keypad(stdscr, TRUE);
 	noecho();
-
-	pthread_create(&new_tid, NULL, drawThread, &draw_thread_data);
+	curs_set(FALSE);
+	
+	//pthread_create(&new_tid, NULL, drawThread, &draw_thread_data);
+	drawThread(&draw_thread_data);
 	pthread_create(&new_tid, NULL, controlThread, &ctrl_thread_data);
 
 	//todo 
@@ -73,7 +75,7 @@ int main(int argc, char **argv){
 
 }
 
-void * drawThread(void * args){
+void drawThread(draw_thread_t * args){
 	WINDOW * win;
 
 	refresh(); //refresh curses mode
@@ -82,8 +84,11 @@ void * drawThread(void * args){
 	win = create_newwin(WIN_HEIGHT, WIN_WIDTH, WIN_Y, WIN_X);
 
 	//get snakes (for easier data extraction)
-	Snake * player_1 = (Snake *)((draw_thread_t *)args)->player_1;
-	Snake * player_2 = (Snake *)((draw_thread_t *)args)->player_2;
+	//Snake * player_1 = (Snake *)((draw_thread_t *)args)->player_1;
+	//Snake * player_2 = (Snake *)((draw_thread_t *)args)->player_2;
+
+	Snake * player_1 = (Snake *)args->player_1;
+	Snake * player_2 = (Snake *)args->player_2;
 
 	//set 
 	/*int tailx1=0;
@@ -92,7 +97,7 @@ void * drawThread(void * args){
 	int taily2=0;
 	*/
 	int applex, appley;
-	while(!*(int *)((draw_thread_t *)args)->game_over){
+	while(!*(int *)args->game_over){
 		//mvaddch(taily1, tailx1, ' ');
 		//mvaddch(taily2, tailx2, ' ');
 		//todo: draw box and snakes and apple
@@ -162,8 +167,8 @@ void * drawThread(void * args){
 			}
 		}
 		free(current2);
-		applex = *(int *)((draw_thread_t *)args)->applex;
-		appley = *(int *)((draw_thread_t *)args)->appley;
+		applex = *(int *)args->applex;
+		appley = *(int *)args->appley;
 		mvaddch(appley, applex, '@');
 		//refresh();
 	}
