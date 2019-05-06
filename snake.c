@@ -10,11 +10,11 @@ void makePoint(Point* p, int x_val, int y_val){
 }
 
 //Creates new point (assign this to a new var)
-Point newPoint(int x_val, int y_val){
-	Point p;
-	p.x = x_val;
-	p.y = y_val;
-	p.next = NULL;
+Point * newPoint(int x_val, int y_val){
+	Point * p = malloc(sizeof(Point));
+	p->x = x_val;
+	p->y = y_val;
+	p->next = NULL;
 	return p;
 }
 
@@ -78,19 +78,19 @@ void printSnake(Snake * snk){
 void initSnake(Snake * snk, int player){
 	int start_x, start_y, grow_dir;
 	if(player == 0){
-		start_x = WIN_X+STANDARD_SNAKE_LENGTH;
+		start_x = WIN_X+STANDARD_SNAKE_LENGTH + 1;
 		grow_dir = -1;
-		start_y = WIN_Y;
+		start_y = WIN_Y+2;
 		snk->icon = '#';
 	}else{
-		start_x = WIN_X + WIN_WIDTH - STANDARD_SNAKE_LENGTH -1;
+		start_x = WIN_X + WIN_WIDTH - STANDARD_SNAKE_LENGTH - 1;
 		grow_dir = 1;
-		start_y = WIN_Y + WIN_HEIGHT - 1;
+		start_y = WIN_Y + WIN_HEIGHT - 3;
 		snk->icon = '&';
 	}
 
-	Point n_head = newPoint(start_x, start_y);
-	snk->head = &n_head;
+	Point * n_head = newPoint(start_x, start_y);
+	snk->head = n_head;
 
 	for(int i = 0; i < STANDARD_SNAKE_LENGTH; i++){
 		start_x += grow_dir;
@@ -99,7 +99,7 @@ void initSnake(Snake * snk, int player){
 	
 	snk->length = STANDARD_SNAKE_LENGTH;
 	
-	if(player%2 == 0){
+	if(player == 0){
 		snk->direction = DIR_RIGHT;
 	}else{
 		snk->direction = DIR_LEFT;

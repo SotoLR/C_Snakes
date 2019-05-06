@@ -18,18 +18,20 @@ all: $(SERVER) $(CLIENT)
 tests: $(CURSESTEST) $(GENERALTEST)
 
 $(SERVER): $(SERVER).c $(OBJECTS)
-	$(CC) -o $@.o $< $(FLAGS) $(LIBS)
+	$(CC) -o $@ $< snake.c $(FLAGS) $(LIBS)
 
 $(CLIENT): $(CLIENT).c $(OBJECTS)
-	$(CC) -o $@.o $< $(FLAGS) $(LIBS)
+	$(CC) -o $@ $< snake.c $(FLAGS) $(LIBS)
 
 $(CURSESTEST): $(CURSESTEST).c $(OBJECTS)
-	$(CC) -o $@.o $< $(FLAGS) $(LIBS)
+	$(CC) -o $@ $< snake.c $(FLAGS) $(LIBS)
 
 $(GENERALTEST): $(GENERALTEST).c $(OBJECTS)
-	$(CC) -o $@.o $< $(FLAGS) $(LIBS)
+	$(CC) -o $@ $< snake.c $(FLAGS) $(LIBS)
 
 clean:
 	rm -rf *.o $(TEST)
+	rm -f snake_client
+	rm -f snake_server
 
 .PHONY: clean all

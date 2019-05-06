@@ -9,10 +9,10 @@
 #define STANDARD_SNAKE_LENGTH 4
 #define SNAKE_SPEED 1
 
-#define WIN_HEIGHT 30
-#define WIN_WIDTH 30
-#define WIN_X 3
-#define WIN_Y 3
+#define WIN_HEIGHT 20
+#define WIN_WIDTH 50
+#define WIN_X 10
+#define WIN_Y 1
 
 typedef struct point_struct{
 	int x;
@@ -28,7 +28,7 @@ typedef struct snake_struct{
 } Snake;
 
 void makePoint(Point* p, int x, int y); //sets point at given addr
-Point newPoint(int x, int y); //Creates new point (assign this to a new var)
+Point * newPoint(int x, int y); //Creates new point (assign this to a new var)
 Point * push_front(Snake * s, int flag, int x, int y); //add to front of snake, if flag, last is not deleted
 int push_back(Snake * snk, int x, int y); //add to back of snake, return new length
 Point * rm_last(Snake * s);
