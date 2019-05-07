@@ -44,8 +44,8 @@ int main(int argc, char **argv){
 	initSnake(p2, 1);
 
 
-	int ay = 5;
-	int ax = 5;
+	int ay = 15;
+	int ax = 15;
 
 	draw_thread_t draw_thread_data;
 	draw_thread_data.player_1 = p1;
@@ -116,20 +116,20 @@ void drawGame(draw_thread_t * args){
 				y++;
 			break;
 		}
-		push_front(player_1, 1, x, y);
+		push_front(player_1, 0, x, y);
 
 		wrefresh(win);
 
 		//printf("p1\n");
 		Point * current1 = player_1->head;
 		for(int i = 0; i < player_1->length; i++){
-			printw("x %d y %d\n", current1->x, current1->y);
+			//printw("x %d y %d\n", current1->x, current1->y);
 			if(i == (player_1->length-1)){
 				mvaddch(current1->y, current1->x, ' ');
 			}else{
 				mvaddch(current1->y, current1->x, player_1->icon);
 			}
-			current1 = player_1->head->next;
+			current1 = current1->next;
 			if(current1 == NULL){
 				break;
 			}
@@ -143,7 +143,7 @@ void drawGame(draw_thread_t * args){
 			}else{
 				mvaddch(current2->y, current2->x, player_2->icon);
 			}
-			current2 = player_2->head->next;
+			current2 = current2->next;
 			if(current2 == NULL){
 				break;
 			}
