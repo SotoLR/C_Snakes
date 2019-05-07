@@ -59,18 +59,16 @@ int main(int argc, char **argv){
 	
 	game_over = 0;
 
+	
 	initscr(); //start curses mode
 	cbreak(); //disable line buffering
 	keypad(stdscr, TRUE);
 	noecho();
 	curs_set(FALSE);
 	
+	
 	pthread_create(&new_tid, NULL, controlThread, &ctrl_thread_data);
 	drawGame(&draw_thread_data);
-
-	//todo 
-	//	init draw thread struct
-	//	start draw thread
 
 	endwin();
 
@@ -95,7 +93,7 @@ void drawGame(draw_thread_t * args){
 	int x, y;
 
 	while(!game_over){
-		usleep(100000);
+		usleep(TIMEOUT_MILIS*1000);
 		//win = create_newwin(WIN_HEIGHT, WIN_WIDTH, WIN_Y, WIN_X);
 		
 		x = player_1->head->x;
@@ -118,12 +116,14 @@ void drawGame(draw_thread_t * args){
 				y++;
 			break;
 		}
-		push_front(player_1, 0, x, y);
+		push_front(player_1, 1, x, y);
 
 		wrefresh(win);
 
+		//printf("p1\n");
 		Point * current1 = player_1->head;
 		for(int i = 0; i < player_1->length; i++){
+			printw("x %d y %d\n", current1->x, current1->y);
 			if(i == (player_1->length-1)){
 				mvaddch(current1->y, current1->x, ' ');
 			}else{
@@ -138,7 +138,7 @@ void drawGame(draw_thread_t * args){
 		
 		Point * current2 = player_2->head;
 		for(int i = 0; i < player_2->length; i++){
-		if(i == (player_2->length-1)){
+			if(i == (player_2->length-1)){
 				mvaddch(current2->y, current2->x, ' ');
 			}else{
 				mvaddch(current2->y, current2->x, player_2->icon);
@@ -157,7 +157,7 @@ void drawGame(draw_thread_t * args){
 
 }
 
-void * controlThread(void * args){
+void * controlThread(void * args){ //adapt this to SEND
 	Snake * player_1 = (Snake *)((ctrl_thread_t *)args)->player_1;
 	//Snake * player_2 = (Snake *)((ctrl_thread_t *)args)->player_2;
 
