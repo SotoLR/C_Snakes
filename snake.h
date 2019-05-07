@@ -14,6 +14,8 @@
 #define WIN_X 10
 #define WIN_Y 1
 
+#define TIMEOUT_MILIS 100
+
 typedef struct point_struct{
 	int x;
 	int y;

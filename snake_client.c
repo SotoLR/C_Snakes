@@ -169,8 +169,6 @@ void * controlThread(void * args){
 	while(!game_over){
 		ch = getch();
 		//timeout(100);
-		
-
 		switch(ch){
 			case KEY_LEFT:
 				player_1->direction = DIR_LEFT;
