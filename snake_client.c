@@ -33,6 +33,7 @@ void drawGame(draw_thread_t * args);
 void * controlThread(void * args);
 
 int game_over;
+int latest_input;
 
 int main(int argc, char **argv){
 	pthread_t new_tid;
@@ -158,12 +159,13 @@ void drawGame(draw_thread_t * args){
 }
 
 void * controlThread(void * args){ //adapt this to SEND
-	Snake * player_1 = (Snake *)((ctrl_thread_t *)args)->player_1;
+	//Snake * player_1 = (Snake *)((ctrl_thread_t *)args)->player_1;
 	//Snake * player_2 = (Snake *)((ctrl_thread_t *)args)->player_2;
+
 
 	int ch;
 
-	player_1->direction = DIR_RIGHT;
+	//player_1->direction = DIR_RIGHT;
 	//player_2->direction = DIR_LEFT;
 
 	while(!game_over){
@@ -171,22 +173,28 @@ void * controlThread(void * args){ //adapt this to SEND
 		//timeout(100);
 		switch(ch){
 			case KEY_LEFT:
-				player_1->direction = DIR_LEFT;
+				latest_input = DIR_LEFT;
+				//player_1->direction = DIR_LEFT;
 			break;
 			case KEY_RIGHT:
-				player_1->direction = DIR_RIGHT;
+				latest_input = DIR_RIGHT;
+				//player_1->direction = DIR_RIGHT;
 			break;
 			case KEY_UP:
-				player_1->direction = DIR_UP;
+				latest_input = DIR_UP;
+				//player_1->direction = DIR_UP;
 			break;
 			case KEY_DOWN:
-				player_1->direction = DIR_DOWN;
+				latest_input = DIR_DOWN;
+				//player_1->direction = DIR_DOWN;
 			break;
 		}
 
+		/*
 		if(player_1->head->x < (WIN_X) || player_1->head->x > (WIN_X+WIN_WIDTH-1) || player_1->head->y < (WIN_Y) || player_1->head->y > (WIN_Y+WIN_HEIGHT-1)){
 			game_over = 1;
 		}
+		*/
 	}
 
 	return NULL;

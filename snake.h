@@ -14,6 +14,13 @@
 #define WIN_X 10
 #define WIN_Y 1
 
+#define STATUS_WAIT 0
+#define STATUS_P1 1
+#define STATUS_P2 2
+#define STATUS_NONE 3
+#define STATUS_WIN 4
+#define STATUS_LOSE 5
+
 #define TIMEOUT_MILIS 100
 
 typedef struct point_struct{
