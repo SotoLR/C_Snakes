@@ -17,18 +17,21 @@ typedef struct thread_data_struct{
 } thread_data_t;
 */
 
+/*
 typedef struct draw_thread_struct{
 	Snake * player_1;
 	Snake * player_2;
 	int * applex;
 	int * appley;
 } draw_thread_t;
+*/
 
 typedef struct control_thread_struct{
 	Snake * player_1;
 	Snake * player_2;
 } ctrl_thread_t;
 
+//void drawGame(draw_thread_t * args);
 void drawGame(draw_thread_t * args);
 void * controlThread(void * args);
 
@@ -38,21 +41,8 @@ int latest_input;
 int main(int argc, char **argv){
 	pthread_t new_tid;
 
-	Snake * p1 = malloc(sizeof(Snake));
-	initSnake(p1, 0);
-
-	Snake * p2 = malloc(sizeof(Snake));
-	initSnake(p2, 1);
-
-
-	int ay = 15;
-	int ax = 15;
-
-	draw_thread_t draw_thread_data;
-	draw_thread_data.player_1 = p1;
-	draw_thread_data.player_2 = p2;
-	draw_thread_data.applex = &ax;
-	draw_thread_data.appley = &ay;
+	//draw_thread_t draw_thread_data;
+	//INIT DRAW THREAD DATA?
 
 	ctrl_thread_t ctrl_thread_data;
 	ctrl_thread_data.player_1 = p1;
@@ -69,13 +59,14 @@ int main(int argc, char **argv){
 	
 	
 	pthread_create(&new_tid, NULL, controlThread, &ctrl_thread_data);
+	drawGame();
 	drawGame(&draw_thread_data);
 
 	endwin();
-
 }
 
-void drawGame(draw_thread_t * args){
+//void drawGame(draw_thread_t * args){
+void drawGame(){
 	WINDOW * win;
 
 	refresh(); //refresh curses mode
@@ -86,23 +77,26 @@ void drawGame(draw_thread_t * args){
 
 	//mvaddch(WIN_Y+1, WIN_X+1, '+');
 
-	//get snakes (for easier data extraction)
-	Snake * player_1 = (Snake *)args->player_1;
-	Snake * player_2 = (Snake *)args->player_2;
+	Snake * player_1 = malloc(sizeof(Snake));
+	initSnake(player_1, 0);
 
-	int applex, appley;
-	int x, y;
+	Snake * player_2 = malloc(sizeof(Snake));
+	initSnake(player_2, 1);
+
+	int applex, appley; //to be received
+	int nx1, ny1, nx2, ny2; //to be received
 
 	while(!game_over){
-		usleep(TIMEOUT_MILIS*1000);
+		//usleep(TIMEOUT_MILIS*1000);
 		//win = create_newwin(WIN_HEIGHT, WIN_WIDTH, WIN_Y, WIN_X);
 		
-		x = player_1->head->x;
-		y = player_1->head->y;
+		//x = player_1->head->x;
+		//y = player_1->head->y;
 
 		//printf("%d\n",player_1->direction);
 		//mvaddch(WIN_Y+5, WIN_X+5, (char)player_1->direction);
 
+		/*
 		switch(player_1->direction){
 			case DIR_LEFT:
 				x--;
@@ -117,6 +111,9 @@ void drawGame(draw_thread_t * args){
 				y++;
 			break;
 		}
+		*/
+		
+
 		push_front(player_1, 0, x, y);
 
 		wrefresh(win);
@@ -150,8 +147,8 @@ void drawGame(draw_thread_t * args){
 			}
 		}
 		//free(current2);
-		applex = *(int *)args->applex;
-		appley = *(int *)args->appley;
+		applex = ;
+		appley = ;
 		mvaddch(appley, applex, '@');
 		refresh();
 	}
@@ -159,42 +156,25 @@ void drawGame(draw_thread_t * args){
 }
 
 void * controlThread(void * args){ //adapt this to SEND
-	//Snake * player_1 = (Snake *)((ctrl_thread_t *)args)->player_1;
-	//Snake * player_2 = (Snake *)((ctrl_thread_t *)args)->player_2;
-
 
 	int ch;
 
-	//player_1->direction = DIR_RIGHT;
-	//player_2->direction = DIR_LEFT;
-
 	while(!game_over){
 		ch = getch();
-		//timeout(100);
 		switch(ch){
 			case KEY_LEFT:
 				latest_input = DIR_LEFT;
-				//player_1->direction = DIR_LEFT;
 			break;
 			case KEY_RIGHT:
 				latest_input = DIR_RIGHT;
-				//player_1->direction = DIR_RIGHT;
 			break;
 			case KEY_UP:
 				latest_input = DIR_UP;
-				//player_1->direction = DIR_UP;
 			break;
 			case KEY_DOWN:
 				latest_input = DIR_DOWN;
-				//player_1->direction = DIR_DOWN;
 			break;
 		}
-
-		/*
-		if(player_1->head->x < (WIN_X) || player_1->head->x > (WIN_X+WIN_WIDTH-1) || player_1->head->y < (WIN_Y) || player_1->head->y > (WIN_Y+WIN_HEIGHT-1)){
-			game_over = 1;
-		}
-		*/
 	}
 
 	return NULL;
