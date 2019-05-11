@@ -33,7 +33,8 @@ typedef struct control_thread_struct{
 	Snake * player_2;
 } ctrl_thread_t;
 
-typedef struct receive_data_struct{
+//data to be extracted from received message
+typedef struct receive_data_struct{ 
 	int * status;
 	int * new_p1x;
 	int * new_p1y;
@@ -46,36 +47,47 @@ typedef struct receive_data_struct{
 } received_t;
 
 //void drawGame(draw_thread_t * args);
-void drawGame();
+
+//Draw curses stuff, communicate with server
+void drawGame(int connection_fd);
+
+//Get player input and save it to global variable
 void * controlThread(void * args);
 
-int game_over;
-int latest_input;
-int player_number;
+int game_over; //if true, game is over
+int latest_input; //Latest user input saved here
+int player_number; //To tell user if they are player 1 or 2
 
 int main(int argc, char **argv){
 	pthread_t new_tid;
 
 	//draw_thread_t draw_thread_data;
 	//INIT DRAW THREAD DATA?
+	//not needed, it seems
 
-	ctrl_thread_t ctrl_thread_data; //change this?
-	ctrl_thread_data.player_1 = p1;
+	ctrl_thread_t ctrl_thread_data; //change this? 
+	ctrl_thread_data.player_1 = p1; //if data is sent from draw function, this struct is not necessary
 	ctrl_thread_data.player_2 = p2;
 	
-	game_over = 0;
+	game_over = 0; //game over = false
 
-	char msg_get[SERVER_MSG_LEN];
+	char msg_get[SERVER_MSG_LEN]; //message to receive
 	int connection_fd = connectSocket(argv[1], argv[2]);
-	char msg_send[CLIENT_MSG_LEN];
-	sprintf(msg_send, "%d %d", 0, 0); //what is this send for? Is it necessary?
+	char msg_send[CLIENT_MSG_LEN]; //message to send
+	sprintf(msg_send, "%d %d", 0, 0); 
+	sendString(connection_fd, msg_send, CLIENT_MSG_LEN);
+	/*
+	Is that ^^^^ send necessary? I only did it because I tried
+	removing the send right after connectSocket is called in Prueba/client
+	and it broke
+	*/
 
-	int status;
-	int new_p1x, new_p1y, p1_grow_flag;
-	int new_p2x, new_p2y, p2_grow_flag;
+	int status; //game status
+	int new_p1x, new_p1y, p1_grow_flag; //new coordinates for player 1 and grow flag
+	int new_p2x, new_p2y, p2_grow_flag; //new coordinates for player 2 and grow flag
 		
 	printf("Waiting for opponent...");
-	while(1){
+	while(1){ //Wait until opponent has connected to start ncurses mode
 		printf(".");
 		recvString(connection_fd, msg_get, SERVER_MSG_LEN);
 		sscanf(msg_get, "%d %d %d %d %d %d %d %d %d",
@@ -83,22 +95,22 @@ int main(int argc, char **argv){
 			&new_p1x, &new_p1y, &p1_grow_flag,
 			&new_p2x, &new_p2y, &p2_grow_flag,
 			&applex, &appley);
-		if(status == 0){
+		if(status == 0){ //Server sends this as long as the second player has not connected
 			continue;
 		}else if(status == 1){
 			//set me as player 1
-			printf("You are player 1 -> #######\n");
+			printf("You are player 1 -> #######\nGET READY!\n");
 			player_number = 1;
-			usleep(TIMEOUT_MILIS*1000*50);
+			usleep(TIMEOUT_MILIS*1000*50); //Give user time to get ready
 			break;
 		}else if(status == 2){
 			//set me as player 2
-			printf("You are player 2 -> &&&&&&&\n");
+			printf("You are player 2 -> &&&&&&&\nGET READY!\n");
 			player_number = 2;
 			usleep(TIMEOUT_MILIS*1000*50);
 			break;
 		}else{
-			printf("Something's wrong...");
+			printf("Something's wrong..."); //status should only ever be 0 1 or 2 at this point
 			break;
 		}
 	}
@@ -132,19 +144,18 @@ void drawGame(int connection_fd){
 
 	//mvaddch(WIN_Y+1, WIN_X+1, '+');
 
-	Snake * player_1 = malloc(sizeof(Snake));
+	Snake * player_1 = malloc(sizeof(Snake)); //init player 1
 	initSnake(player_1, 0);
 
-	Snake * player_2 = malloc(sizeof(Snake));
+	Snake * player_2 = malloc(sizeof(Snake)); //init player 2
 	initSnake(player_2, 1);
 
-	//int applex, appley; //to be received
-	//int nx1, ny1, nx2, ny2; //to be received
-
+	//Same as before
 	int status;
 	int new_p1x, new_p1y, p1_grow_flag;
 	int new_p2x, new_p2y, p2_grow_flag;
 
+	//declare get and receive messages
 	char msg_get[SERVER_MSG_LEN];
 	char msg_send[CLIENT_MSG_LEN];
 
@@ -174,27 +185,25 @@ void drawGame(int connection_fd){
 			break;
 		}
 		*/
+
+		//get message from server, parse it
 		recvString(connection_fd, msg_get, SERVER_MSG_LEN);
 		sscanf(msg_get, "%d %d %d %d %d %d %d %d %d",
-			status,
-			new_p1x,
-			new_p1y,
-			p1_grow_flag,
-			new_p2x,
-			new_p2y,
-			p2_grow_flag,
-			applex,
-			appley);
+			&status,
+			&new_p1x, &new_p1y, &p1_grow_flag,
+			&new_p2x, &new_p2y, &p2_grow_flag,
+			&applex, &appley);
 
-		if(*new_msg->status == 1){
+		if(status > 3){
 			game_over = 1;
 		}
 
+		//Add to snakes depending on what was received
 		push_front(player_1, p1_grow_flag, win_x + 1 + new_p1x, win_y + 1 + new_p1y);
 		push_front(player_2, p2_grow_flag, win_x + 1 + new_p1x, win_y + 1 + new_p2x);
 		wrefresh(win);
 
-		//printf("p1\n");
+		//Print the snakes
 		Point * current1 = player_1->head;
 		for(int i = 0; i < player_1->length; i++){
 			//printw("x %d y %d\n", current1->x, current1->y);
@@ -223,9 +232,13 @@ void drawGame(int connection_fd){
 			}
 		}
 		//free(current2);
+
+		//print the apple
 		mvaddch(win_y + 1 + appley, win_x + 1 + applex, '@');
 		refresh();
 
+		//send latest user input, along with player number
+		//THIS IS THE PART THAT MIGHT HAVE TO BE MOVED
 		sprintf(msg_send, "%d %d", player_number, latest_input);
 		sendString(connection_fd, msg_send, CLIENT_MSG_LEN);
 	}
@@ -239,7 +252,7 @@ void drawGame(int connection_fd){
 	}
 }
 
-void * controlThread(void * args){ //adapt this to SEND
+void * controlThread(void * args){ //adapt this to send?
 
 	int ch;
 
@@ -259,6 +272,7 @@ void * controlThread(void * args){ //adapt this to SEND
 				latest_input = DIR_DOWN;
 			break;
 		}
+		//THIS IS WHERE THE SEND WOULD BE MOVED TO
 	}
 
 	return NULL;

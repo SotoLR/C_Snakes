@@ -138,61 +138,27 @@ void* attentionThread(void* arg)
     int poll_response;
     int timeout = 500;
     thread_data_t * data = (thread_data_t*)arg;
-    char buffer[BUFFER_SIZE];
-    int response;
-    recvString(data->connection_fd, buffer, BUFFER_SIZE);
+    //char buffer[BUFFER_SIZE];
+    char msg_get[CLIENT_MSG_LEN];
+    //int response;
+    recvString(data->connection_fd, msg_get, CLIENT_MSG_LEN);
+
+    int new_x1, new_y1;
+    int new_x2, new_y2;
+    int client_number;
+
+    while(client_count < 2){
+    	sendString(data->connection_fd, "0 0 0 0 0 0 0 0 0", SERVER_MSG_LEN);
+    }
 
     while (!interrupt_exit)
     {
-        // Create a structure array to hold the file descriptors to poll
-        struct pollfd test_fds[1];
-        // Fill in the structure
-        test_fds[0].fd = data->connection_fd;
-        test_fds[0].events = POLLIN;    // Check for incomming data
-        poll_response = poll(test_fds, 1, timeout);
-
-        if (poll_response == -1)
-        {
-            /*if (errno == EINTR)
-            {
-                break;
-            }*/
-            break;
-        }
-        // Receive the request
-        else if (poll_response > 0)
-        {
-            if (recvString(data->connection_fd, buffer, BUFFER_SIZE) == 0)
-            {
-                printf("Client disconnected\n");
-                break;
-            }
-            else
-            {
-                /*printf("Client1: %d\n", clients[0]);
-                printf("Client2: %d\n", clients[1]);
-                printf("Connection_fd %d\n", data->connection_fd);*/
-                if(data->connection_fd == clients[0])
-                {
-                    /*
-                    response = atoi(buffer);
-                    printf("Player 1 said: %d\n", response);
-                    sprintf(buffer, "%d", response);
-                    send(data->connection_fd, buffer, BUFFER_SIZE, 0);
-                    */
-                }
-                else
-                {
-                    /*
-                    response = atoi(buffer);
-                    printf("Player 2 said: %d\n", response);
-                    sprintf(buffer, "%d", response);
-                    send(data->connection_fd, buffer, BUFFER_SIZE, 0);
-                    */
-                }
-            }
-
-        }
+    	if(recvString(data->connection_fd, msg_get, CLIENT_MSG_LEN) == 0){
+    		printf("Client disconnected\n");
+    		break;
+    	}else{
+    		sscanf(msg_get, "%d %d", &client_number);
+    	}
     }
     client_count--;
     pthread_exit(NULL);
