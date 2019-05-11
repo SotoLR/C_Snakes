@@ -78,14 +78,14 @@ void printSnake(Snake * snk){
 void initSnake(Snake * snk, int player){
 	int start_x, start_y, grow_dir;
 	if(player == 0){
-		start_x = WIN_X+STANDARD_SNAKE_LENGTH + 1;
+		start_x = STANDARD_SNAKE_LENGTH + 1;
 		grow_dir = -1;
-		start_y = WIN_Y+2;
+		start_y = 2;
 		snk->icon = '#';
 	}else{
-		start_x = WIN_X + WIN_WIDTH - STANDARD_SNAKE_LENGTH - 1;
+		start_x = WIN_WIDTH - STANDARD_SNAKE_LENGTH - 2;
 		grow_dir = 1;
-		start_y = WIN_Y + WIN_HEIGHT - 3;
+		start_y = WIN_HEIGHT - 3;
 		snk->icon = '&';
 	}
 

@@ -11,8 +11,8 @@
 
 #define WIN_HEIGHT 20
 #define WIN_WIDTH 50
-#define WIN_X 10
-#define WIN_Y 1
+//#define WIN_X 10
+//#define WIN_Y 1
 
 #define STATUS_WAIT 0
 #define STATUS_P1 1
