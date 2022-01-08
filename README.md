@@ -1,3 +1,3 @@
 # Multiplayer Snake game
 
-This was meant to be a networked multiplayer snake game written in C. It was not completed, but I hope I will someday.
+This was meant to be a networked multiplayer Snake game. It runs on the CLI, using the Curses library. It was not completed, but I hope to come back to it one day.
